@@ -56,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(fontSize: 16),
                   ),
                 ),
+                SizedBox(height: 10),
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white, // White background
@@ -82,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                 ),
-                SizedBox(height: 16.0), // Space below the email field
+                SizedBox(height: 25.0), // Space below the email field
 
                 // Password label and text field
                 Align(
@@ -92,6 +93,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(fontSize: 16),
                   ),
                 ),
+                SizedBox(height: 10),
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white, // White background
