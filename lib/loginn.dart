@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:placement1/company/company_home.dart';
 import 'package:placement1/student/home.dart';
 
 class LoginPage extends StatefulWidget {
@@ -20,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
       // Navigate to the home page after successful login
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => JobApplicationHome()),
+        MaterialPageRoute(builder: (context) => DashboardScreen()),
       );
     }
   }
@@ -127,8 +128,8 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: _login,
                   child: Text('Sign In'),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.blueGrey, // Change button color
-                    onPrimary: Colors.white, // Text color
+                    backgroundColor: Colors.blueGrey, // Change button color
+                    //   onPrimary: Colors.white, // Text color
                     padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10), // Rounded corners
