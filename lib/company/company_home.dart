@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:placement1/company/Create_report.dart';
 import 'package:placement1/company/add_company_data.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:placement1/company/coordinator_profile.dart';
@@ -64,6 +63,7 @@ class DashboardScreen extends StatelessWidget {
               title: Text('Add Company Details'),
               leading: Icon(Icons.business),
               onTap: () {
+                // Replace `YourPrewrittenClassName` with the name of your pre-written class
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => AddCompanyData()),
@@ -83,18 +83,13 @@ class DashboardScreen extends StatelessWidget {
             ListTile(
               title: Text('Create Report'),
               leading: Icon(Icons.report),
-              onTap: () {
-                // Replace `YourPrewrittenReportClass` with the name of your pre-written class
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CreateReportPage()),
-                );
-              },
+              onTap: () {},
             ),
             ListTile(
               title: Text('Post Feed'),
               leading: Icon(Icons.feed),
               onTap: () {
+                // Show the pop-up with text input when "Post Feed" is clicked
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true, // Allows the modal to move up with the keyboard
