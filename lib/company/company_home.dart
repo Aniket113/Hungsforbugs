@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:placement1/company/Create_report.dart';
 import 'package:placement1/company/add_company_data.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:placement1/company/coordinator_profile.dart';
@@ -83,7 +84,12 @@ class DashboardScreen extends StatelessWidget {
             ListTile(
               title: Text('Create Report'),
               leading: Icon(Icons.report),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                   context,
+                   MaterialPageRoute(builder: (context) => CreateReportPage()),
+                 );
+              },
             ),
             ListTile(
               title: Text('Post Feed'),

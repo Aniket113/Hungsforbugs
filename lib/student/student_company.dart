@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:placement1/student/View_Notice.dart';
 
 class CompanyListPage extends StatefulWidget {
   @override
@@ -89,7 +90,6 @@ class _CompanyListPageState extends State<CompanyListPage> {
             SizedBox(height: 20),
 
             // Company list in card format
-            // Company list in card format
             Expanded(
               child: ListView.builder(
                 itemCount: companies.length,
@@ -129,12 +129,24 @@ class _CompanyListPageState extends State<CompanyListPage> {
                           ),
 
                           // See more text
-                          Text(
-                            'See more',
-                            style: TextStyle(
-                              color: Colors.blue, // Color for the see more link
-                              fontSize: 14,
-                              // decoration: TextDecoration.underline, // Underline for link effect
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return ViewNotice(); // Replace with your pre-written class name
+                                  },
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'See more',
+                              style: TextStyle(
+                                color: Colors.blue, // Color for the see more link
+                                fontSize: 14,
+                                // decoration: TextDecoration.underline, // Underline for link effect
+                              ),
                             ),
                           ),
                         ],

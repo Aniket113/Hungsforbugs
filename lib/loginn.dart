@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
       // Navigate to the home page after successful login
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => DashboardScreen()),
+        MaterialPageRoute(builder: (context) => JobApplicationHome1()),
       );
     }
   }
