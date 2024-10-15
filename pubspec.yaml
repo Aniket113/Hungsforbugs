@@ -26,7 +26,8 @@ dependencies:
   http: ^1.2.0
   firebase_app_check: ^0.2.1+17
   awesome_snackbar_content: 0.1.1
-  cool_alert: ^2.0.1
+  cool_alert: 1.1.0
+  flutter_animated_icons: 1.0.0
 
 
 dev_dependencies:

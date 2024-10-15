@@ -93,10 +93,10 @@ packages:
     dependency: "direct main"
     description:
       name: cool_alert
-      sha256: "080a6c3503a4cded8f626cdead23f17ea40ff066ff50847d71a7a264032ab092"
+      sha256: "48a0b6c04914b6dc7e8d7eaccf2adf21bace6533a3eda0aeb412e0d7a03dc00a"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.1"
+    version: "1.1.0"
   cross_file:
     dependency: transitive
     description:
@@ -270,6 +270,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_animated_icons:
+    dependency: "direct main"
+    description:
+      name: flutter_animated_icons
+      sha256: "83d57f4e3d1c4fa2754bfc2180cfeb31f5d7893e3bf8c0edd7adab312aa0fbcc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -412,10 +420,10 @@ packages:
     dependency: transitive
     description:
       name: lottie
-      sha256: a93542cc2d60a7057255405f62252533f8e8956e7e06754955669fd32fb4b216
+      sha256: "893da7a0022ec2fcaa616f34529a081f617e86cc501105b856e5a3184c58c7c2"
       url: "https://pub.dev"
     source: hosted
-    version: "2.7.0"
+    version: "1.4.3"
   matcher:
     dependency: transitive
     description:
