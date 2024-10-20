@@ -3,6 +3,8 @@ import 'package:placement1/loginn.dart'; // Your login class
 import 'package:placement1/student/student_company.dart';
 import 'package:placement1/student/student_profile.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(JobApplicationHome1());
@@ -39,11 +41,36 @@ class _JobApplicationHomeState extends State<JobApplicationHome> {
     // Add more jobs if needed
   ];
 
-  // Function to remove a job card
-  void _removeJobCard(int index) {
-    setState(() {
-      jobCards.removeAt(index);
-    });
+  String? _userName;
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserData(); // Fetch user data on initialization
+  }
+
+  // Function to get the user's name using the stored docId
+  Future<void> _getUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userDocId = prefs.getString('docId'); // Get the stored docId
+
+    if (userDocId != null) {
+      // Fetch data directly from the document using the stored docId
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('students')
+          .doc(userDocId)
+          .get(); // Fetch the document by docId
+
+      if (userSnapshot.exists && userSnapshot.data() != null) {
+        setState(() {
+          _userName = userSnapshot['name']; // Access the 'name' field directly
+        });
+      } else {
+        setState(() {
+          _userName = 'Unknown User'; // If no data exists, show default
+        });
+      }
+    }
   }
 
   @override
@@ -110,43 +137,39 @@ class _JobApplicationHomeState extends State<JobApplicationHome> {
                   ),
                 ];
               },
-              // Adjust the offset to open below the menu icon
               offset: Offset(0, 40), // Adjust this value as needed for spacing
             ),
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()), // Navigate to ProfilePage
-                    );
-                  },
-                  child: Row(
-                    children: [
-                      Text(
-                        "Aniket Salvi",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      CircleAvatar(
-                        backgroundColor: Colors.teal,
-                        radius: 20,
-                        child: Icon(
-                          Icons.person,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
-                    ],
+            // Display the fetched user name or "Loading..."
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfilePage()), // Navigate to ProfilePage
+                );
+              },
+              child: Row(
+                children: [
+                  Text(
+                    _userName ?? "Loading...", // Display user's name or "Loading..."
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-              ],
-            )
+                  SizedBox(width: 8),
+                  CircleAvatar(
+                    backgroundColor: Colors.teal,
+                    radius: 20,
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
         backgroundColor: Colors.transparent,
@@ -268,21 +291,21 @@ class _JobApplicationHomeState extends State<JobApplicationHome> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      elevation: 5,
+                      elevation: 5, // Button shadow
                     ),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      // Handle "Search" action
+                      // Handle "View More Jobs" action
                     },
-                    child: Text('Search'),
+                    child: Text('View More Jobs'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal, // Background color
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      elevation: 5,
+                      elevation: 5, // Button shadow
                     ),
                   ),
                 ],
@@ -294,66 +317,47 @@ class _JobApplicationHomeState extends State<JobApplicationHome> {
     );
   }
 
-  // Job card widget with remove icon
-  Widget jobCard(String title, String company, int index) {
+  // Widget for Job Card
+  Widget jobCard(String jobTitle, String companyName, int index) {
     return Card(
-      elevation: 4,
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      color: Colors.teal.withOpacity(0.2),
-      child: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
+      color: Colors.teal.withOpacity(0.1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: Colors.tealAccent),
+      ),
+      margin: EdgeInsets.only(bottom: 16),
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  jobTitle,
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
                     fontSize: 18,
+                    fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
                 SizedBox(height: 4),
                 Text(
-                  company,
+                  companyName,
                   style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white70,
-                  ),
-                ),
-                SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle Apply button press
-                  },
-                  child: Text(
-                    'Apply',
-                    style: TextStyle(color: Colors.black), // Text color for visibility
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.tealAccent, // Button background color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                    fontSize: 14,
+                    color: Colors.white,
                   ),
                 ),
               ],
             ),
-          ),
-          // Cross icon in the top-right corner to remove the card
-          Positioned(
-            right: 0,
-            top: 0,
-            child: IconButton(
-              icon: Icon(Icons.close, color: Colors.red),
-              onPressed: () {
-                _removeJobCard(index); // Call the remove function
-              },
+            Icon(
+              Icons.arrow_forward,
+              color: Colors.tealAccent,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

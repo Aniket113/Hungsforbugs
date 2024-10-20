@@ -28,6 +28,7 @@ dependencies:
   awesome_snackbar_content: 0.1.1
   cool_alert: 1.1.0
   flutter_animated_icons: 1.0.0
+  shared_preferences: ^2.2.3
 
 
 dev_dependencies:

@@ -5,6 +5,7 @@ import 'package:cool_alert/cool_alert.dart';
 import 'package:placement1/company/company_home.dart';
 import 'package:placement1/student/home.dart';
 import 'package:placement1/signup.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -15,6 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   String _email = '';
   String _password = '';
+  String _userType = ''; // User type (Student or Recruiter)
 
   void _login() async {
     if (_formKey.currentState!.validate()) {
@@ -36,7 +38,13 @@ class _LoginPageState extends State<LoginPage> {
             .get();
 
         if (studentSnapshot.docs.isNotEmpty) {
-          _showSuccessAlert('Login successful! Welcome Student!');
+          _userType = 'Student'; // Set user type
+          String docId = studentSnapshot.docs[0].id;
+          String name = studentSnapshot.docs[0]['name']; // Retrieve name
+          await _saveDocIdToLocalStorage(docId); // Save docId to local storage
+          print('Logged in as Student, Name: $name, Doc ID: $docId'); // Print Name and Doc ID
+
+          _showSuccessAlert('Login successful! Welcome $name!');
           Future.delayed(Duration(seconds: 2), () {
             Navigator.pushReplacement(
               context,
@@ -44,7 +52,13 @@ class _LoginPageState extends State<LoginPage> {
             );
           });
         } else if (recruiterSnapshot.docs.isNotEmpty) {
-          _showSuccessAlert('Login successful! Welcome Recruiter!');
+          _userType = 'Recruiter'; // Set user type
+          String docId = recruiterSnapshot.docs[0].id;
+          String name = recruiterSnapshot.docs[0]['name']; // Retrieve name
+          await _saveDocIdToLocalStorage(docId); // Save docId to local storage
+          print('Logged in as Recruiter, Name: $name, Doc ID: $docId'); // Print Name and Doc ID
+
+          _showSuccessAlert('Login successful! Welcome $name!');
           Future.delayed(Duration(seconds: 2), () {
             Navigator.pushReplacement(
               context,
@@ -58,6 +72,26 @@ class _LoginPageState extends State<LoginPage> {
         print('Error during login: $e');
         _showErrorSnackbar('An error occurred, please try again');
       }
+    }
+  }
+
+  Future<void> _saveDocIdToLocalStorage(String docId) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('docId', docId);
+      print('Doc ID saved to local storage: $docId');
+    } catch (e) {
+      print('Error saving Doc ID: $e');
+    }
+  }
+
+  Future<String?> _retrieveDocIdFromLocalStorage() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      return prefs.getString('docId'); // Retrieve docId from local storage
+    } catch (e) {
+      print('Error retrieving Doc ID: $e');
+      return null;
     }
   }
 
