@@ -63,6 +63,7 @@ class _AddCompanyDataState extends State<AddCompanyData> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Company'),
+        backgroundColor: Colors.black87,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -77,6 +78,8 @@ class _AddCompanyDataState extends State<AddCompanyData> {
                   decoration: InputDecoration(
                     labelText: 'Name',
                     border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -93,6 +96,8 @@ class _AddCompanyDataState extends State<AddCompanyData> {
                   decoration: InputDecoration(
                     labelText: 'HR Name',
                     border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -109,6 +114,8 @@ class _AddCompanyDataState extends State<AddCompanyData> {
                   decoration: InputDecoration(
                     labelText: 'HR Mail id',
                     border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -125,6 +132,8 @@ class _AddCompanyDataState extends State<AddCompanyData> {
                   decoration: InputDecoration(
                     labelText: 'HR Number',
                     border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -141,6 +150,8 @@ class _AddCompanyDataState extends State<AddCompanyData> {
                   decoration: InputDecoration(
                     labelText: 'Contact Date',
                     border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -157,6 +168,8 @@ class _AddCompanyDataState extends State<AddCompanyData> {
                   decoration: InputDecoration(
                     labelText: 'Location',
                     border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -173,6 +186,11 @@ class _AddCompanyDataState extends State<AddCompanyData> {
                   ElevatedButton(
                     onPressed: _saveCompanyData,
                     child: Text('Save'),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                      textStyle: TextStyle(fontSize: 16),
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    ),
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -185,6 +203,11 @@ class _AddCompanyDataState extends State<AddCompanyData> {
                       );
                     },
                     child: Text('View Company'),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white, backgroundColor: Colors.green,
+                      textStyle: TextStyle(fontSize: 16),
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    ),
                   ),
                 ],
               ),
