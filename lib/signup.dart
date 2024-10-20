@@ -104,186 +104,196 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Center(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'Register Yourself',
-                  style: TextStyle(
-                    color: Colors.purple,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 32.0),
-                // Added Name Field
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text('Name', style: TextStyle(fontSize: 16)),
-                ),
-                SizedBox(height: 10),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Enter your name',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      contentPadding: EdgeInsets.all(12),
-                    ),
-                    style: TextStyle(color: Colors.black),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your name';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _name = value!; // Save name to variable
-                    },
-                  ),
-                ),
-                SizedBox(height: 25.0),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text('Email', style: TextStyle(fontSize: 16)),
-                ),
-                SizedBox(height: 10),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Enter your email',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      contentPadding: EdgeInsets.all(12),
-                    ),
-                    style: TextStyle(color: Colors.black),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _email = value!;
-                    },
-                  ),
-                ),
-                SizedBox(height: 25.0),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text('Password', style: TextStyle(fontSize: 16)),
-                ),
-                SizedBox(height: 10),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Enter your password',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      contentPadding: EdgeInsets.all(12),
-                    ),
-                    style: TextStyle(color: Colors.black),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _password = value!;
-                    },
-                  ),
-                ),
-                SizedBox(height: 25.0),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text('User Type', style: TextStyle(fontSize: 16)),
-                ),
-                SizedBox(height: 10),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: DropdownButtonFormField<String>(
-                    hint: Text('Select User'),
-                    value: _userType,
-                    decoration: InputDecoration(border: InputBorder.none),
-                    items: ['Student', 'Recruiter'].map((userType) {
-                      return DropdownMenuItem(
-                        value: userType,
-                        child: Text(userType),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _userType = value!;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select a user type';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                SizedBox(height: 32.0),
-                ElevatedButton(
-                  onPressed: _signUp,
-                  child: Text('Sign Up'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey,
-                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: BorderSide(color: Colors.black),
-                    ),
-                    elevation: 5,
-                  ),
-                ),
-                SizedBox(height: 20), // Add space between button and the text
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
-                    ); // Navigate to the login page
-                  },
-                  child: Text(
-                    'Already registered?',
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.purple.shade800, Colors.black],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Center(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Register Yourself',
                     style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 16,
-                      // decoration: TextDecoration.overline,
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(height: 32.0),
+                  // Added Name Field
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('Name', style: TextStyle(fontSize: 16, color: Colors.white)),
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Enter your name',
+                        hintStyle: TextStyle(color: Colors.grey),
+                        contentPadding: EdgeInsets.all(12),
+                      ),
+                      style: TextStyle(color: Colors.white),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your name';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _name = value!;
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 25.0),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('Email', style: TextStyle(fontSize: 16, color: Colors.white)),
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Enter your email',
+                        hintStyle: TextStyle(color: Colors.grey),
+                        contentPadding: EdgeInsets.all(12),
+                      ),
+                      style: TextStyle(color: Colors.white),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _email = value!;
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 25.0),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('Password', style: TextStyle(fontSize: 16, color: Colors.white)),
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Enter your password',
+                        hintStyle: TextStyle(color: Colors.grey),
+                        contentPadding: EdgeInsets.all(12),
+                      ),
+                      style: TextStyle(color: Colors.white),
+                      obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your password';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _password = value!;
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 25.0),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('User Type', style: TextStyle(fontSize: 16, color: Colors.white)),
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: DropdownButtonFormField<String>(
+                      hint: Text('Select User', style: TextStyle(color: Colors.white)),
+                      value: _userType,
+                      decoration: InputDecoration(border: InputBorder.none),
+                      dropdownColor: Colors.black,
+                      items: ['Student', 'Recruiter'].map((userType) {
+                        return DropdownMenuItem(
+                          value: userType,
+                          child: Text(userType, style: TextStyle(color: Colors.white)),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _userType = value!;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Please select a user type';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 32.0),
+                  ElevatedButton(
+                    onPressed: _signUp,
+                    child: Text('Sign Up'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueGrey,
+                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(color: Colors.black),
+                      ),
+                      elevation: 5,
+                    ),
+                  ),
+                  SizedBox(height: 20), // Add space between button and the text
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                      ); // Navigate to the login page
+                    },
+                    child: Text(
+                      'Already registered?',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 16,
+                        // decoration: TextDecoration.overline,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
