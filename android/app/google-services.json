@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "315653480240",
+    "project_id": "placement-cell-60d51",
+    "storage_bucket": "placement-cell-60d51.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315653480240:android:adeae8adfab51367a632f5",
+        "android_client_info": {
+          "package_name": "com.example.placement1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4uBqO3aMXvvJE1FQEE_ZneOQ9jzUAorE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
