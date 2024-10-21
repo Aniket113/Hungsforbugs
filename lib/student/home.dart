@@ -42,11 +42,14 @@ class _JobApplicationHomeState extends State<JobApplicationHome> {
   ];
 
   String? _userName;
+  String _selectedFeed = 'Today'; // Default feed type
+  List<String> _feedMessages = []; // List to store the feed messages
 
   @override
   void initState() {
     super.initState();
     _getUserData(); // Fetch user data on initialization
+    _fetchFeedMessages(); // Fetch the feed messages from Firestore
   }
 
   // Function to get the user's name using the stored docId
@@ -71,6 +74,34 @@ class _JobApplicationHomeState extends State<JobApplicationHome> {
         });
       }
     }
+  }
+
+  // Fetch the feed messages from Firestore
+  Future<void> _fetchFeedMessages() async {
+    DateTime now = DateTime.now();
+    DateTime todayStart = DateTime(now.year, now.month, now.day); // Start of today
+    DateTime todayEnd = DateTime(now.year, now.month, now.day + 1); // Start of tomorrow
+
+    QuerySnapshot querySnapshot;
+
+    if (_selectedFeed == 'Today') {
+      // Fetch today's messages
+      querySnapshot = await FirebaseFirestore.instance
+          .collection('feeds')
+          .where('timestamp', isGreaterThanOrEqualTo: todayStart)
+          .where('timestamp', isLessThan: todayEnd)
+          .get();
+    } else {
+      // Fetch previous messages (older than today)
+      querySnapshot = await FirebaseFirestore.instance
+          .collection('feeds')
+          .where('timestamp', isLessThan: todayStart)
+          .get();
+    }
+
+    setState(() {
+      _feedMessages = querySnapshot.docs.map((doc) => doc['message'] as String).toList();
+    });
   }
 
   @override
@@ -183,47 +214,110 @@ class _JobApplicationHomeState extends State<JobApplicationHome> {
           child: Column(
             children: [
               SizedBox(height: 20),
-              // Job Cards
-              ListView.builder(
-                shrinkWrap: true, // Important to make the ListView fit inside the Column
-                physics: NeverScrollableScrollPhysics(), // Disable the internal scroll of ListView
-                itemCount: jobCards.length,
-                itemBuilder: (context, index) {
-                  return jobCard(
-                    jobCards[index]["title"]!,
-                    jobCards[index]["company"]!,
-                    index,
-                  );
-                },
+
+              // Feed Section
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.tealAccent),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Feeds",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Dropdown for Today or Previous feeds
+                          DropdownButton<String>(
+                            value: _selectedFeed,
+                            dropdownColor: Colors.black,
+                            style: TextStyle(color: Colors.white),
+                            items: <String>['Today', 'Previous'].map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _selectedFeed = newValue!;
+                                _fetchFeedMessages(); // Fetch feed messages again on selection change
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+
+                      // Scrollable section for messages
+                      // The outer Container adjusts size based on the number of messages
+                      Container(
+                        constraints: BoxConstraints(maxHeight: 240), // Max height for scrolling
+                        child: ListView.builder(
+                          physics: _feedMessages.length <= 3 ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
+                          itemCount: _feedMessages.length > 3 ? 3 : _feedMessages.length, // Limit to 3 messages max
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 8),
+                              height: 80, // Fixed height for each message box
+                              decoration: BoxDecoration(
+                                color: Colors.teal.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Colors.tealAccent),
+                              ),
+                              padding: EdgeInsets.all(16.0),
+                              child: Center(
+                                child: Text(
+                                  _feedMessages[index],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
+
               SizedBox(height: 20),
-              // Calendar with selected date
+
+              // Calendar
               TableCalendar(
                 focusedDay: focusedDate,
-                firstDay: DateTime(2023),
-                lastDay: DateTime(2030),
-                calendarFormat: CalendarFormat.month,
-                selectedDayPredicate: (day) {
-                  return isSameDay(selectedDate, day);
-                },
-                onDaySelected: (selectedDay, focusedDay) {
-                  setState(() {
-                    selectedDate = selectedDay;
-                    focusedDate = focusedDay;
-                  });
-                },
+                firstDay: DateTime.utc(2020, 1, 1),
+                lastDay: DateTime.utc(2030, 12, 31),
                 calendarStyle: CalendarStyle(
                   todayDecoration: BoxDecoration(
-                    color: Colors.teal,
-                    shape: BoxShape.circle,
-                  ),
-                  selectedDecoration: BoxDecoration(
                     color: Colors.tealAccent,
                     shape: BoxShape.circle,
                   ),
-                  defaultTextStyle: TextStyle(color: Colors.white),
-                  weekendTextStyle: TextStyle(color: Colors.white),
-                  outsideTextStyle: TextStyle(color: Colors.grey),
+                  selectedDecoration: BoxDecoration(
+                    color: Colors.teal,
+                    shape: BoxShape.circle,
+                  ),
+                  outsideDecoration: BoxDecoration(
+                    color: Colors.transparent,
+                  ),
+                  defaultDecoration: BoxDecoration(
+                    color: Colors.teal.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
                 ),
                 headerStyle: HeaderStyle(
                   formatButtonVisible: false,
@@ -244,8 +338,15 @@ class _JobApplicationHomeState extends State<JobApplicationHome> {
                     ),
                   ),
                 ),
+                onDaySelected: (selectedDay, focusedDay) {
+                  setState(() {
+                    selectedDate = selectedDay;
+                    focusedDate = focusedDay;
+                  });
+                },
               ),
               SizedBox(height: 20),
+
               // "Ends" label and Time input
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -276,6 +377,7 @@ class _JobApplicationHomeState extends State<JobApplicationHome> {
                 ],
               ),
               SizedBox(height: 20),
+
               // Buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -286,12 +388,12 @@ class _JobApplicationHomeState extends State<JobApplicationHome> {
                     },
                     child: Text('Check My Applied'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal, // Background color
+                      backgroundColor: Colors.teal,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      elevation: 5, // Button shadow
+                      elevation: 5,
                     ),
                   ),
                   ElevatedButton(
@@ -300,12 +402,12 @@ class _JobApplicationHomeState extends State<JobApplicationHome> {
                     },
                     child: Text('View More Jobs'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal, // Background color
+                      backgroundColor: Colors.teal,
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      elevation: 5, // Button shadow
+                      elevation: 5,
                     ),
                   ),
                 ],
@@ -318,7 +420,7 @@ class _JobApplicationHomeState extends State<JobApplicationHome> {
   }
 
   // Widget for Job Card
-  Widget jobCard(String jobTitle, String companyName, int index) {
+  Widget jobCard(String jobTitle, String companyName) {
     return Card(
       color: Colors.teal.withOpacity(0.1),
       shape: RoundedRectangleBorder(

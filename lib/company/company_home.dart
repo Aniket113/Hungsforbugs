@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore import
 import 'package:placement1/company/Create_report.dart'; // Adjust import as necessary
 import 'package:placement1/company/add_company_data.dart'; // Assuming AddCompanyData class exists here
 import 'package:placement1/loginn.dart';
@@ -97,6 +98,8 @@ class DashboardScreen extends StatelessWidget {
                         builder: (context) => CreateReportPage(), // Replace with your actual class
                       ),
                     );
+                  } else if (value == 'post_feed') {
+                    _showPostFeedDialog(context); // Show Post Feed dialog
                   } else if (value == 'logout') {
                     // Redirect to login page
                     Navigator.pushReplacement(
@@ -193,13 +196,13 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blue, // Floating action button color
-        onPressed: () {
-          // Handle the floating action button press
-        },
-        child: Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   backgroundColor: Colors.blue, // Floating action button color
+      //   onPressed: () {
+      //     // Handle the floating action button press
+      //   },
+      //   child: Icon(Icons.add),
+      // ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.black87, // Bottom bar color
         child: Row(
@@ -228,6 +231,54 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
+
+  // Function to show the Post Feed dialog
+  void _showPostFeedDialog(BuildContext context) {
+    TextEditingController _feedController = TextEditingController(); // Controller to manage the text area input
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Post Feed'),
+          content: TextField(
+            controller: _feedController,
+            maxLines: 4, // Makes it a text area
+            decoration: InputDecoration(
+              hintText: "Enter your post here...",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog without posting
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                String postText = _feedController.text;
+
+                if (postText.isNotEmpty) {
+                  await FirebaseFirestore.instance.collection('feeds').add({
+                    'message': postText,
+                    'timestamp': FieldValue.serverTimestamp(), // Add the timestamp
+                  });
+
+                  // Optionally show a success message or perform other actions
+                  print("Post Feed: $postText stored in Firestore");
+
+                  Navigator.of(context).pop(); // Close the dialog after posting
+                }
+              },
+              child: Text('Post'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class JobCard extends StatelessWidget {
@@ -254,7 +305,7 @@ class JobCard extends StatelessWidget {
           onPressed: () {},
           child: Text('Apply'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue, // Button color
+            backgroundColor: Colors.blueAccent,
           ),
         ),
       ),
