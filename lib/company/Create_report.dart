@@ -1,16 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-class CreateReportApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: CreateReportPage(),
-    );
-  }
-}
+import 'package:placement1/company/Create_report.dart';
 
 class CreateReportPage extends StatefulWidget {
   @override
@@ -44,30 +35,42 @@ class _CreateReportPageState extends State<CreateReportPage> {
     super.dispose();
   }
 
-  void _saveForm() {
+  void _saveForm() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Perform save action
-      print('Organisation: ${_organisationController.text}');
-      print('Student: ${_studentController.text}');
-      print('Branch: ${_branchController.text}');
-      print('Campus: ${_campusController.text}');
-      print('Package: ${_packageController.text}');
-      print('Student Number: ${_studentNumberController.text}');
-      print('Role Placed For: ${_rolePlacedForController.text}');
-      print('Placement Type: $_placementType');
+      // Save data to Firestore
+      try {
+        DocumentReference docRef = await FirebaseFirestore.instance
+            .collection('companies')
+            .add({
+          'organisation': _organisationController.text,
+          'student': _studentController.text,
+          'branch': _branchController.text,
+          'campus': _campusController.text,
+          'package': _packageController.text,
+          'studentNumber': _studentNumberController.text,
+          'rolePlacedFor': _rolePlacedForController.text,
+          'placementType': _placementType,
+        });
 
-      // Clear the form fields after saving
-      _organisationController.clear();
-      _studentController.clear();
-      _branchController.clear();
-      _campusController.clear();
-      _packageController.clear();
-      _studentNumberController.clear();
-      _rolePlacedForController.clear();
+        print('Document ID: ${docRef.id}');
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Report saved successfully!')),
-      );
+        // Clear the form fields after saving
+        _organisationController.clear();
+        _studentController.clear();
+        _branchController.clear();
+        _campusController.clear();
+        _packageController.clear();
+        _studentNumberController.clear();
+        _rolePlacedForController.clear();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Report saved successfully!')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save report: $e')),
+        );
+      }
     }
   }
 
@@ -77,7 +80,6 @@ class _CreateReportPageState extends State<CreateReportPage> {
       context,
       MaterialPageRoute(
         builder: (context) {
-          // Replace 'PlacementReportPage' with the name of your pre-written class
           return PlacementReportPage();
         },
       ),
@@ -337,8 +339,9 @@ class _CreateReportPageState extends State<CreateReportPage> {
                         child: Text(
                           'View Placement Report',
                           style: TextStyle(
-                            color: Colors.blueAccent,
                             fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blueAccent,
                           ),
                         ),
                       ),
@@ -354,17 +357,63 @@ class _CreateReportPageState extends State<CreateReportPage> {
   }
 }
 
-// Replace with the name of your pre-written class for the Placement Report
 class PlacementReportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Placement Report'),
+        backgroundColor: Colors.blueAccent,
       ),
-      body: Center(
-        child: Text('This is where the placement report will be displayed.'),
-      ),
+      body: PlacementReportTable(),
+    );
+  }
+}
+
+class PlacementReportTable extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('companies').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        final data = snapshot.requireData;
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: DataTable(
+            columns: const <DataColumn>[
+              DataColumn(label: Text('Organisation')),
+              DataColumn(label: Text('Student')),
+              DataColumn(label: Text('Branch')),
+              DataColumn(label: Text('Campus')),
+              DataColumn(label: Text('Package')),
+              DataColumn(label: Text('Student Number')),
+              DataColumn(label: Text('Role Placed For')),
+              DataColumn(label: Text('Placement Type')),
+            ],
+            rows: data.docs.map((doc) {
+              return DataRow(
+                cells: <DataCell>[
+                  DataCell(Text(doc['organisation'])),
+                  DataCell(Text(doc['student'])),
+                  DataCell(Text(doc['branch'])),
+                  DataCell(Text(doc['campus'])),
+                  DataCell(Text(doc['package'])),
+                  DataCell(Text(doc['studentNumber'])),
+                  DataCell(Text(doc['rolePlacedFor'])),
+                  DataCell(Text(doc['placementType'])),
+                ],
+              );
+            }).toList(),
+          ),
+        );
+      },
     );
   }
 }

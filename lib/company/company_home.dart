@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:placement1/company/Create_report.dart';
+import 'package:placement1/company/Create_report.dart'; // Adjust import as necessary
 import 'package:placement1/company/add_company_data.dart'; // Assuming AddCompanyData class exists here
+import 'package:placement1/loginn.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:placement1/company/coordinator_profile.dart';
-import 'package:placement1/company/create_notice.dart';
+import 'package:placement1/company/coordinator_profile.dart'; // Adjust import as necessary
+import 'package:placement1/company/create_notice.dart'; // Adjust import as necessary
 
 class DashboardScreen extends StatelessWidget {
   @override
@@ -62,6 +63,16 @@ class DashboardScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+                    PopupMenuItem<String>(
+                      value: 'logout',
+                      child: Row(
+                        children: [
+                          Icon(Icons.logout, color: Colors.red), // Log out icon
+                          SizedBox(width: 8),
+                          Text('Log Out', style: TextStyle(color: Colors.red)),
+                        ],
+                      ),
+                    ),
                   ],
                 ).then((value) {
                   // Handle navigation based on selected value
@@ -69,25 +80,29 @@ class DashboardScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AddCompanyData(), // Navigate to Add Company Details page
+                        builder: (context) => AddCompanyData(), // Replace with your actual class
                       ),
                     );
                   } else if (value == 'create_notice') {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CreateNotice(), // Navigate to Create Notice page
+                        builder: (context) => CreateNotice(), // Replace with your actual class
                       ),
                     );
                   } else if (value == 'create_report') {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CreateReportPage(), // Navigate to Create Report page
+                        builder: (context) => CreateReportPage(), // Replace with your actual class
                       ),
                     );
-                  } else if (value == 'post_feed') {
-                    // Implement Post Feed functionality here
+                  } else if (value == 'logout') {
+                    // Redirect to login page
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()), // Replace with your actual login class
+                    );
                   }
                 });
               },
@@ -111,7 +126,7 @@ class DashboardScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ProfilePage()), // Navigate to Profile page
+                MaterialPageRoute(builder: (context) => ProfilePage()), // Replace with your actual profile class
               );
             },
           ),
@@ -283,22 +298,22 @@ class _CalendarSectionState extends State<CalendarSection> {
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
             titleCentered: true,
-            titleTextStyle: TextStyle(color: Colors.white), // Calendar title color
-            leftChevronIcon: Icon(Icons.chevron_left, color: Colors.white), // Left arrow color
-            rightChevronIcon: Icon(Icons.chevron_right, color: Colors.white), // Right arrow color
+            titleTextStyle: TextStyle(color: Colors.white),
+            leftChevronIcon: Icon(Icons.chevron_left, color: Colors.white),
+            rightChevronIcon: Icon(Icons.chevron_right, color: Colors.white),
           ),
           calendarStyle: CalendarStyle(
             todayDecoration: BoxDecoration(
-              color: Colors.blue, // Today's date color
+              color: Colors.blue,
               shape: BoxShape.circle,
             ),
             selectedDecoration: BoxDecoration(
-              color: Colors.blueAccent, // Selected date color
+              color: Colors.blueAccent,
               shape: BoxShape.circle,
             ),
-            defaultTextStyle: TextStyle(color: Colors.white), // Default text color
-            weekendTextStyle: TextStyle(color: Colors.red), // Weekend text color
-            outsideTextStyle: TextStyle(color: Colors.grey), // Outside text color
+            defaultTextStyle: TextStyle(color: Colors.white),
+            weekendTextStyle: TextStyle(color: Colors.red),
+            outsideTextStyle: TextStyle(color: Colors.grey),
           ),
         ),
       ],
@@ -310,24 +325,23 @@ class ButtonSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           ElevatedButton(
-            onPressed: () {},
-            child: Text('Edit Booking'),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-          ),
-          ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              // Handle book room
+            },
             child: Text('Post Feed'),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
           ),
           ElevatedButton(
-            onPressed: () {},
-            child: Text('Cancel Booking'),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+            onPressed: () {
+              // Handle another button action
+            },
+            child: Text('Edit Date'),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
           ),
         ],
       ),
