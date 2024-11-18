@@ -1,199 +1,231 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ViewNotice extends StatelessWidget {
+  final String docid;
+
+  ViewNotice({required this.docid});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple, // You can change the theme color
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Company Details'),
+        centerTitle: true,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("Company Notice"),
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back), // Icon for the back button
-            onPressed: () {
-              Navigator.pop(context); // Navigates back to the previous screen
-            },
-          ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Company and Role Section with Card
-                Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  color: Colors.deepPurple[50],
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Lentra',
-                          style: TextStyle(
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.deepPurple,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'SOC Analyst',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'FINAL INTERNSHIP NOTICE\nFor 2025 Batch',
-                          style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                        ),
-                      ],
+      body: FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance.collection('notices').doc(docid).get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return Center(child: Text('No details found for this company.'));
+          }
+
+          // Extract data from the document
+          final notice = snapshot.data!.data() as Map<String, dynamic>;
+          final companyName = notice['companyName'] ?? 'N/A';
+          final positionName = notice['positionName'] ?? 'N/A';
+          final companyDetails = notice['companyDetails'] ?? 'No details provided.';
+          final batch = notice['batch'] ?? 'N/A';
+          final course = notice['course'] ?? 'N/A';
+          final criteria = notice['criteria'] ?? 'Not specified.';
+          final duration = notice['duration'] ?? 'N/A';
+          final lastDate = notice['lastDate'] ?? 'N/A';
+          final location = notice['location'] ?? 'N/A';
+          final responsibility = notice['responsibility'] ?? 'No responsibility details provided.';
+          final skills = notice['skills'] ?? 'Not specified.';
+          final stipend = notice['stipend'] ?? 'Not disclosed';
+          final year = notice['year'] ?? 'N/A';
+          final timestamp = notice['timestamp'] != null
+              ? (notice['timestamp'] as Timestamp).toDate().toString()
+              : 'N/A';
+
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Company Name
+                  Text(
+                    companyName,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                SizedBox(height: 20),
+                  SizedBox(height: 10),
 
-                // Company Info Section
-                _buildSectionHeader('Company Information'),
-                SizedBox(height: 8),
-                _buildInfoRow('Company', 'Lentra'),
-                _buildInfoRow('Eligible Stream', 'MCS, MCA'),
-                _buildInfoRow('Job Location', 'Pune'),
-                _buildInfoRow('Job Role', 'SOC Analyst Intern'),
-                _buildInfoRow('Stipend', 'INR 20,000/- per month'),
-                _buildInfoRow('Duration', '6 months - 1 year'),
-                _buildInfoRow('Joining', 'Immediate'),
-                SizedBox(height: 20),
+                  // Position Name
+                  Text(
+                    'Position: $positionName',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  SizedBox(height: 20),
 
-                // Responsibilities Section
-                _buildSectionHeader('Responsibilities'),
-                _buildBulletPoint('Detect & report incidents by monitoring the SIEM console.'),
-                _buildBulletPoint('Monitor the SIEM console resources.'),
-                _buildBulletPoint('Report the incidents to the concerned team.'),
-                _buildBulletPoint('Monitor the health of the SIEM.'),
-                // Add more responsibilities similarly...
-                SizedBox(height: 20),
+                  // Company Details
+                  Text(
+                    'Company Details:',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    companyDetails,
+                    style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+                  ),
+                  SizedBox(height: 20),
 
-                // Skills Required Section
-                _buildSectionHeader('Skills Required'),
-                _buildBulletPoint('High-level understanding of TCP/IP protocol and OSI Model.'),
-                _buildBulletPoint('Hands-on knowledge of Linux-based systems.'),
-                _buildBulletPoint('Knowledge of LAN/WAN technologies.'),
-                // Add more skills here...
-                SizedBox(height: 20),
+                  // Responsibilities
+                  Text(
+                    'Responsibilities:',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    responsibility,
+                    style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+                  ),
+                  SizedBox(height: 20),
 
-                // Links Section
-                _buildSectionHeader('Application Links'),
-                _buildLink('Google Form:', 'https://forms.gle/xTbfiHnHEDEZsbh9'),
-                _buildLink('WhatsApp Group:', 'https://chat.whatsapp.com/DZ24m7EiCEKHYQuBRk7Jjf'),
-                SizedBox(height: 20),
+                  // Required Skills
+                  Text(
+                    'Required Skills:',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    skills,
+                    style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+                  ),
+                  SizedBox(height: 20),
 
-                // Apply Button
-                Center(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      // Apply button function here
-                    },
-                    icon: Icon(Icons.send),
-                    label: Text('Apply'),
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                  // Criteria and Batch
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Criteria: $criteria',
+                          style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+                        ),
                       ),
-                    ),
+                      Expanded(
+                        child: Text(
+                          'Batch: $batch',
+                          style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+                  SizedBox(height: 10),
 
-  // Custom reusable method for section headers
-  Widget _buildSectionHeader(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        color: Colors.deepPurple,
-      ),
-    );
-  }
+                  // Course and Year
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Course: $course',
+                          style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Year: $year',
+                          style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
 
-  // Custom reusable method for displaying info in rows
-  Widget _buildInfoRow(String title, String info) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              '$title:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            child: Text(info),
-          ),
-        ],
-      ),
-    );
-  }
+                  // Location and Duration
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Location: $location',
+                          style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Duration: $duration',
+                          style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
 
-  // Custom reusable method for bullet points
-  Widget _buildBulletPoint(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        children: [
-          Icon(Icons.circle, size: 8, color: Colors.deepPurple),
-          SizedBox(width: 8),
-          Expanded(child: Text(text)),
-        ],
-      ),
-    );
-  }
+                  // Stipend
+                  Row(
+                    children: [
+                      Icon(Icons.attach_money, color: Colors.green),
+                      SizedBox(width: 5),
+                      Text(
+                        'Stipend: $stipend',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
 
-  // Custom reusable method for clickable links
-  Widget _buildLink(String title, String url) {
-    return GestureDetector(
-      onTap: () {
-        // Add functionality for link tap
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Row(
-          children: [
-            Text(
-              title,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(width: 4),
-            Expanded(
-              child: Text(
-                url,
-                style: TextStyle(
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline,
-                ),
+                  // Application Deadline
+                  Row(
+                    children: [
+                      Icon(Icons.calendar_today, color: Colors.red),
+                      SizedBox(width: 5),
+                      Text(
+                        'Last Date: $lastDate',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+
+                  // Timestamp
+                  Row(
+                    children: [
+                      Icon(Icons.access_time, color: Colors.blue),
+                      SizedBox(width: 5),
+                      Text(
+                        'Posted On: $timestamp',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

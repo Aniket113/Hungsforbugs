@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:placement1/student/View_Notice.dart';
 
 class CompanyListPage extends StatefulWidget {
@@ -10,9 +11,6 @@ class _CompanyListPageState extends State<CompanyListPage> {
   String selectedButton = 'All'; // Default selected button
   bool isEligible = false; // Checkbox for eligible
   bool isNonEligible = false; // Checkbox for non-eligible
-
-  // List of companies
-  List<String> companies = ['Accenture', 'LTI', 'Wipro', 'Infosys', 'TCS'];
 
   @override
   Widget build(BuildContext context) {
@@ -89,74 +87,94 @@ class _CompanyListPageState extends State<CompanyListPage> {
 
             SizedBox(height: 20),
 
-            // Company list in card format
+            // Dynamic company list from Firestore
             Expanded(
-              child: ListView.builder(
-                itemCount: companies.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    elevation: 4,
-                    margin: EdgeInsets.symmetric(vertical: 8.0),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0), // Padding inside the card
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space between elements
-                        crossAxisAlignment: CrossAxisAlignment.center, // Center alignment
-                        children: [
-                          // Column for Designation Name and Company Name
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
-                            children: [
-                              // Designation Name
-                              Text(
-                                'Full Stack Developer', // Change this to the actual designation
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              SizedBox(height: 4), // Space between designation and company name
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance.collection('notices').snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
 
-                              // Company Name
-                              Text(
-                                companies[index], // Company name from the list
-                                style: TextStyle(
-                                  color: Colors.grey[700], // Dark grey color
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
 
-                          // See more text
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    return ViewNotice(); // Replace with your pre-written class name
-                                  },
-                                ),
-                              );
-                            },
-                            child: Text(
-                              'See more',
-                              style: TextStyle(
-                                color: Colors.blue, // Color for the see more link
-                                fontSize: 14,
-                                // decoration: TextDecoration.underline, // Underline for link effect
+                  final documents = snapshot.data?.docs;
+
+                  if (documents == null || documents.isEmpty) {
+                    return Center(child: Text('No notices found.'));
+                  }
+
+                  return ListView.builder(
+                    itemCount: documents.length,
+                    itemBuilder: (context, index) {
+                      final notice = documents[index];
+                      final companyName = notice['companyName'] ?? 'Unknown Company';
+                      final positionName = notice['positionName'] ?? 'Unknown Position';
+                      final docid = notice.id; // Fetch the document ID
+
+                      return Card(
+                        elevation: 4,
+                        margin: EdgeInsets.symmetric(vertical: 8.0),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ViewNotice(docid: docid),
                               ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                // Column for Position Name and Company Name
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Position Name
+                                    Text(
+                                      positionName,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4), // Space between position and company name
+
+                                    // Company Name
+                                    Text(
+                                      companyName,
+                                      style: TextStyle(
+                                        color: Colors.grey[700],
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                // See more text
+                                Text(
+                                  'See more',
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
             ),
-
           ],
         ),
       ),

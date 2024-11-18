@@ -159,29 +159,39 @@ class DashboardScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white, // Feed title color
+                        color: Colors.white,
                       ),
                     ),
                     SizedBox(height: 10),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1), // Card background
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.grey),
-                      ),
-                      padding: EdgeInsets.all(10),
-                      child: Column(
-                        children: [
-                          JobCard(
-                            jobTitle: "Software Developer",
-                            companyName: "Accenture",
-                          ),
-                          JobCard(
-                            jobTitle: "Software Developer",
-                            companyName: "LTI Mindtree",
-                          ),
-                        ],
-                      ),
+                    // Fetch and display feeds
+                    StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('notices')
+                          .orderBy('timestamp', descending: true)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                          return Text(
+                            "No feeds available.",
+                            style: TextStyle(color: Colors.white),
+                          );
+                        }
+                        return ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            var feedData = snapshot.data!.docs[index];
+                            return JobCard(
+                              jobTitle: feedData['positionName'] ?? "No title",
+                              companyName: feedData['companyName'] ?? "Anonymous",
+                            );
+                          },
+                        );
+                      },
                     ),
                   ],
                 ),
