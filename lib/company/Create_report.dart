@@ -363,7 +363,7 @@ class PlacementReportPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Placement Report'),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.white,
       ),
       body: PlacementReportTable(),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:placement1/loginn.dart'; // Your login class
+import 'package:placement1/student/myapplied.dart';
 import 'package:placement1/student/student_company.dart';
 import 'package:placement1/student/student_profile.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -385,6 +386,13 @@ class _JobApplicationHomeState extends State<JobApplicationHome> {
                   ElevatedButton(
                     onPressed: () {
                       // Handle "Check My Applied" action
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyApplied(), // Navigate to the StudentDashboard page
+                        ),
+                      );
+
                     },
                     child: Text('Check My Applied'),
                     style: ElevatedButton.styleFrom(

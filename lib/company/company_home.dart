@@ -5,7 +5,9 @@ import 'package:placement1/company/add_company_data.dart'; // Assuming AddCompan
 import 'package:placement1/loginn.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:placement1/company/coordinator_profile.dart'; // Adjust import as necessary
-import 'package:placement1/company/create_notice.dart'; // Adjust import as necessary
+import 'package:placement1/company/create_notice.dart';
+
+import 'company_report.dart'; // Adjust import as necessary
 
 class DashboardScreen extends StatelessWidget {
   @override
@@ -51,6 +53,16 @@ class DashboardScreen extends StatelessWidget {
                           Icon(Icons.report, color: Colors.black),
                           SizedBox(width: 8),
                           Text('Create Report'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<String>(
+                      value: 'view_report', // New option added
+                      child: Row(
+                        children: [
+                          Icon(Icons.visibility, color: Colors.black),
+                          SizedBox(width: 8),
+                          Text('View Report'),
                         ],
                       ),
                     ),
@@ -107,6 +119,13 @@ class DashboardScreen extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => LoginPage()), // Replace with your actual login class
                     );
                   }
+                  else if (value == 'view_report') { // Insert the new logic here
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PlacementReportPage(), // The new ViewReportPage class
+                    ),
+                  );}
                 });
               },
             );
